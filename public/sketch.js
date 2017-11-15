@@ -1,4 +1,5 @@
 var socket;
+var enemies = [];
 var x;
 var y;
 var dx;
@@ -6,6 +7,7 @@ var dy;
 var ex;
 var ey;
 var points = 0;
+var aantalenemies = 2;
 
 function setup() {
   createCanvas(innerWidth - 50, innerHeight - 70);
@@ -13,7 +15,7 @@ function setup() {
   y = random(20, innerHeight - 90);
   // Start a socket connection to the server
   // Some day we would run this server somewhere else
-  socket = io.connect('http://192.168.2.20:3000/');
+  socket = io.connect('http://localhost:3000/');
   // We make a named event called 'mouse' and write an
   // anonymous callback function
   socket.on('pos',
@@ -34,6 +36,10 @@ function setup() {
       }
     }
   );
+  for (var i = 0; i < aantalenemies; i++) {
+        enemy = new Enemyobject(ex, ey);
+        enemies.push(enemy);
+    }
 }
 
 function draw() {
@@ -53,6 +59,14 @@ if (y < 0){
   points--;
 }
 
+if (x > innerWidth - 70){
+  points--;
+}
+
+if (y > innerHeight - 90){
+  points--;
+}
+
 if (points < 0){
   points = 0;
 }
@@ -68,9 +82,14 @@ if (points < 5){
   }
 
 
-  fill(80, 80, 150);
+  /*fill(80, 80, 150);
   noStroke();
-  ellipse(ex, ey, 20, 20);
+  ellipse(ex, ey, 20, 20);*/
+
+  for (var i = 0; i < aantalenemies; i++) {
+        enemies1 = enemies[i];
+        enemies1.teken();
+    }
 
   fill(180, 20, 20);
   noStroke();
@@ -106,4 +125,16 @@ function sendmouse(xpos, ypos) {
 
   // Send that object to the socket
   socket.emit('pos',data);
+}
+
+
+function Enemyobject(ex, ey) {
+    this.xPos = ex;
+    this.yPos = ey;
+
+    this.teken = function() {
+      fill(180, 20, 20);
+      noStroke();
+      ellipse(ex,ey,20,20);
+    }
 }
